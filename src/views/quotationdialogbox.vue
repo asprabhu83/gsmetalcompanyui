@@ -464,11 +464,11 @@ onEnter(ev, products, product) {
 
         },
 selectProduct (lproduct, product)  {
+    console.log(lproduct, product)
     if(lproduct.product_name !== 'others') {
         product.product_name = lproduct.product_name
  product.showList = false
- 
- if(this.quotationData.rate !== '') {
+ if(this.quotationData.rate && (this.quotationData.rate > 0 || this.quotationData.rate < 0)) {
     let rate = parseFloat(this.quotationData.rate);
                 let multiplier = 1;
                 if (rate < 0) {
@@ -479,6 +479,7 @@ selectProduct (lproduct, product)  {
                     product.product_wholesale_price = (parseFloat(lproduct.product_wholesale_price) + (parseFloat(lproduct.product_wholesale_price) * (rate / 100) * multiplier)).toFixed(2);
 
  } else {
+    console.log('this.quotationdata', lproduct.product_wholesale_price)
     product.product_price = parseFloat(lproduct.product_price);
     product.product_wholesale_price = parseFloat(lproduct.product_wholesale_price);
  }
@@ -650,12 +651,13 @@ selectProduct (lproduct, product)  {
                 }
                
                 let totalAmountExclGst = 0;
-                let rate = parseFloat(this.quotationData.rate);
+                let rate = this.quotationData.rate===''?0:parseFloat(this.quotationData.rate);
                 let multiplier = 1;
                 if (rate < 0) {
                     rate = Math.abs(rate);
                     multiplier = -1;
                 }
+                
                 this.jobworkData.forEach(jobwork => {
                     jobwork.productData.forEach(product => {
                         const price = this.quotationData.selectedpricemethod === 'ProductPrice' ? parseFloat(product.product_price) : parseFloat(product.product_wholesale_price);
