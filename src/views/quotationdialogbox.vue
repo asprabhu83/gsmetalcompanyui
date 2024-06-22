@@ -467,12 +467,26 @@ selectProduct (lproduct, product)  {
     if(lproduct.product_name !== 'others') {
         product.product_name = lproduct.product_name
  product.showList = false
-                    product.product_price = parseFloat(lproduct.product_price);
-                    product.product_wholesale_price = parseFloat(lproduct.product_wholesale_price);
+ 
+ if(this.quotationData.rate !== '') {
+    let rate = parseFloat(this.quotationData.rate);
+                let multiplier = 1;
+                if (rate < 0) {
+                    rate = Math.abs(rate);
+                    multiplier = -1;
+                }
+    product.product_price = (parseFloat(lproduct.product_price) + (parseFloat(lproduct.product_price) * (rate / 100) * multiplier)).toFixed(2);
+                    product.product_wholesale_price = (parseFloat(lproduct.product_wholesale_price) + (parseFloat(lproduct.product_wholesale_price) * (rate / 100) * multiplier)).toFixed(2);
+
+ } else {
+    product.product_price = parseFloat(lproduct.product_price);
+    product.product_wholesale_price = parseFloat(lproduct.product_wholesale_price);
+ }
+                    
                 product.unit_type = lproduct.unit.unit_type;
     } else {
         product.product_name = lproduct.product_name
- product.showList = false
+        product.showList = false
     }
 
 },
@@ -487,7 +501,7 @@ selectProduct (lproduct, product)  {
                 product.showList = false
             })
             const response = await axios.get(`${this.apiUrl}/products`);
-            console.log(response)
+         
             if (response.data && response.data.products) {
                 jobwork.products = response.data.products;
             }
@@ -634,8 +648,7 @@ selectProduct (lproduct, product)  {
                 } else if(this.selecteddiscount === "Discountbyamount"){
                     this.quotationData.less_value = 0
                 }
-            if (this.quotationData.rate !== '') {
-                
+               
                 let totalAmountExclGst = 0;
                 let rate = parseFloat(this.quotationData.rate);
                 let multiplier = 1;
@@ -679,40 +692,7 @@ selectProduct (lproduct, product)  {
                 const lessValuePercentage = parseFloat(this.quotationData.less_value) || 0;
                 const lessValueAmount = totalAmountExclGst * (lessValuePercentage / 100);
                 this.quotationData.lessvalue_amount = lessValuePercentage > 0 ?lessValueAmount.toFixed(2): '';
-            } else {
-
-                let totalAmountExclGst = 0;
-                this.jobworkData.forEach(jobwork => {
-                    jobwork.productData.forEach(product => {
-                        const price = this.quotationData.selectedpricemethod === 'ProductPrice' ? parseFloat(product.product_price) : parseFloat(product.product_wholesale_price);
-                        const quantity = parseFloat(product.product_quantity);
-                        const amount = (price * quantity).toFixed(2);
-                        product.amount = amount;
-                        totalAmountExclGst += parseFloat(amount);
-                    });
-                });
-
-                const total_amount_wo_gst = totalAmountExclGst
-                const lessValuePercentage = parseFloat(this.quotationData.less_value) || 0;
-                const lessValueAmount = totalAmountExclGst * (lessValuePercentage / 100);
-                this.quotationData.lessvalue_amount = lessValuePercentage > 0 ?lessValueAmount.toFixed(2): '';
-                const additionalValue = parseFloat(this.quotationData.additional_value) || 0;
-                totalAmountExclGst += additionalValue;
-                const discountPercentage = parseFloat(this.quotationData.less_value) || 0;
-                const discountAmount = total_amount_wo_gst * (discountPercentage / 100);
-                const discountedTotalAmountExclGst = totalAmountExclGst - discountAmount;
-                const gstdiscountSMount = total_amount_wo_gst - discountAmount
-                const lessTotalAmount =  parseFloat(this.quotationData.less_amount) || 0;
-                  //new Assign
-                const finalDiscountedTotalAmountExclGst =  discountedTotalAmountExclGst - lessTotalAmount;
-                const gst = parseFloat(this.quotationData.gst);
-                const totalAmountInclGst = finalDiscountedTotalAmountExclGst + (gstdiscountSMount * gst / 100);
-                const gstAmount = gstdiscountSMount * gst / 100
-                this.quotationData.amount_wo_gst = finalDiscountedTotalAmountExclGst
-                this.quotationData.gst_amount = gstAmount.toFixed(2)
-             
-                this.quotationData.totalamount = totalAmountInclGst.toFixed(2);
-            }
+            
         },
 
 
