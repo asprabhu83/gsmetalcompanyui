@@ -39,7 +39,7 @@
                                 </option>
                             </select>
                             <label for="rate">Rate</label>
-                            <input id="rate" v-model="quotationData.rate" type="number" class="form-control my-2"
+                            <input id="rate" v-model="quotationData.rate" type="number" class="form-control my-2" @change="updateProductPrice"
                                 placeholder=" % ">
 
 
@@ -464,10 +464,13 @@ onEnter(ev, products, product) {
 
         },
 selectProduct (lproduct, product)  {
-    console.log(lproduct, product)
+  
     if(lproduct.product_name !== 'others') {
         product.product_name = lproduct.product_name
  product.showList = false
+ product.actual_price = lproduct.product_price
+ product.actual_wholesale_price = lproduct.product_wholesale_price
+ 
  if(this.quotationData.rate && (this.quotationData.rate > 0 || this.quotationData.rate < 0)) {
     let rate = parseFloat(this.quotationData.rate);
                 let multiplier = 1;
@@ -479,7 +482,9 @@ selectProduct (lproduct, product)  {
                     product.product_wholesale_price = (parseFloat(lproduct.product_wholesale_price) + (parseFloat(lproduct.product_wholesale_price) * (rate / 100) * multiplier)).toFixed(2);
 
  } else {
-    console.log('this.quotationdata', lproduct.product_wholesale_price)
+    
+ product.actual_price = lproduct.product_price
+ product.actual_wholesale_price = lproduct.product_wholesale_price
     product.product_price = parseFloat(lproduct.product_price);
     product.product_wholesale_price = parseFloat(lproduct.product_wholesale_price);
  }
@@ -489,7 +494,6 @@ selectProduct (lproduct, product)  {
         product.product_name = lproduct.product_name
         product.showList = false
     }
-
 },
         async fetchData(endpoint, responseDataKey, extractFromTableName = false) {
             const response = await axios.get(this.apiUrl + endpoint);
@@ -642,7 +646,24 @@ selectProduct (lproduct, product)  {
         updateTermsAndConditions() {
             this.quotationData.terms_conditions = this.selectedTerms;
         },
+        updateProductPrice() {
+            let rate = this.quotationData.rate===''?0:parseFloat(this.quotationData.rate);
+                let multiplier = 1;
+                if (rate < 0) {
+                    rate = Math.abs(rate);
+                    multiplier = -1;
+                }
+                
+                this.jobworkData.forEach(jobwork => {
+                    if(jobwork.productData && jobwork.productData.length > 0)
+                    jobwork.productData.forEach(product => {
+                        product.product_price = (parseFloat(product.actual_price) + (parseFloat(product.actual_price) * (rate / 100) * multiplier)).toFixed(2);
+                        product.product_wholesale_price = (parseFloat(product.actual_wholesale_price) + (parseFloat(product.actual_wholesale_price) * (rate / 100) * multiplier)).toFixed(2);
 
+                    });
+                });
+               
+        },
         updateTotalPrice() {
             if(this.selecteddiscount === "Discountbypercentage") {
                     this.quotationData.less_amount = 0
@@ -663,32 +684,28 @@ selectProduct (lproduct, product)  {
                         const price = this.quotationData.selectedpricemethod === 'ProductPrice' ? parseFloat(product.product_price) : parseFloat(product.product_wholesale_price);
                         const quantity = parseFloat(product.product_quantity);
                         let amount = (price * quantity).toFixed(2);
-                        amount = (parseFloat(amount) + (parseFloat(amount) * (rate / 100) * multiplier)).toFixed(2);
                         product.amount = amount;
                         totalAmountExclGst += parseFloat(amount);
                     });
                 });
-                const total_amount_wo_gst = totalAmountExclGst
-                const additionalValue = parseFloat(this.quotationData.additional_value) || 0;
-                totalAmountExclGst += additionalValue;
+               
                 
                 const discountPercentage = parseFloat(this.quotationData.less_value) || 0;
-                const discountAmount = total_amount_wo_gst * (discountPercentage / 100)
-                const gstdiscountSMount = total_amount_wo_gst - discountAmount
+                const discountAmount = totalAmountExclGst * (discountPercentage / 100)
                 
                     const discountedTotalAmountExclGst =  totalAmountExclGst - discountAmount;
                 const lessTotalAmount =  parseFloat(this.quotationData.less_amount) || 0;
                 
                 
-                
+                const additionalValue = parseFloat(this.quotationData.additional_value) || 0;
                 //new Assign
-                const finalDiscountedTotalAmountExclGst =  discountedTotalAmountExclGst - lessTotalAmount;
+                const finalDiscountedTotalAmountExclGst =  discountedTotalAmountExclGst - lessTotalAmount + additionalValue;
                 const gst = parseFloat(this.quotationData.gst);
-                const totalAmountInclGst = finalDiscountedTotalAmountExclGst + (gstdiscountSMount * gst / 100);
-                const gstAmount = gstdiscountSMount * gst / 100
+                const totalAmountInclGst = finalDiscountedTotalAmountExclGst + (finalDiscountedTotalAmountExclGst * gst / 100);
+                const gstAmount = finalDiscountedTotalAmountExclGst * gst / 100
                 this.quotationData.amount_wo_gst = finalDiscountedTotalAmountExclGst.toFixed(2)
                 this.quotationData.gst_amount = gstAmount.toFixed(2)
-                this.quotationData.totalamount = totalAmountInclGst.toFixed(2);
+                this.quotationData.totalamount = Math.round(totalAmountInclGst).toFixed(2);
                 //lessvalueAmount
 
                 const lessValuePercentage = parseFloat(this.quotationData.less_value) || 0;
