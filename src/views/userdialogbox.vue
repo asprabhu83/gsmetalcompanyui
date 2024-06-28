@@ -254,19 +254,25 @@ export default {
             this.loading = true
             let errorsValid = 0
             this.validate_fields.forEach((quote)=> {
-                if(this.details[quote] == '' ) {
-                    
+                if(quote !=='user_password' && this.userRole === 'salesperson') {
+                    if(this.details[quote] == '' ) {
                     errorsValid += 1
                     return false
                 }
+                }
+                
             })
-
+            console.log(this.details)
             if(errorsValid === 0) {
+           try {
+             await axios.post(this.apiUrl + "/createuser", this.details);
+             this.details = {};
+             this.closeDialogAndNavigate();
+           } catch (err) {
+            this.showError(err.response.data.error)
+           }
+            
            
-            await axios.post(this.apiUrl + "/createuser", this.details);
-            this.details = {};
-
-            this.closeDialogAndNavigate();
             }else {
                 this.showError("Please Fill All Fields!..")
             }
