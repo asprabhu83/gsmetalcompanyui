@@ -119,9 +119,10 @@ export default {
             this.loading = true
             let errorsValid = 0
             this.validate_fields.forEach((quote)=> {
-                if(this.product[quote] == '' ) {
-                    
+                if(this.product[quote] === '' ) {
                     errorsValid += 1
+                    console.log(quote, this.product[quote], errorsValid)
+        
                     return false
                 }
             })
