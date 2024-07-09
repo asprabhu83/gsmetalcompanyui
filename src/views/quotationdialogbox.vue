@@ -54,7 +54,7 @@
                         
                             <select id="customer" v-model="quotationData.customer_id" class="form-select my-2">
                                 <option v-for="(option4, key) in responseuser" :value="option4.user_id" :key="key">
-                                    {{ option4.first_name }} {{ option4.last_name }}
+                                    {{ option4.first_name }} {{ option4.last_name }} ({{ option4.phone_no }})
                                 </option>
                             </select>
                             <label for="date">Date</label>

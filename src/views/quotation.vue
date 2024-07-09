@@ -69,6 +69,13 @@
         class="p-column-filter" />
 </template>
 </Column>
+<Column field="customer_phone_no" header="Customer Phone" sortable style="min-width: 12rem">
+
+    <template #filter="{ filterModel, filterCallback }">
+        <InputText v-model="filterModel.value" type="text" autocomplete="off" @input="filterCallback()"
+            class="p-column-filter" />
+    </template>
+    </Column>
 <Column field="preparedby_name" header="Prepared by" sortable style="min-width: 12rem">
 
 <template #filter="{ filterModel, filterCallback }">
@@ -89,10 +96,17 @@
                                 class="p-column-filter" />
                         </template>
                     </Column>
+                    
+                    <Column field="approved_status" header="Status" style="width: 10%">
+                        <template #body="rowData">
+                             {{ rowData.data.approved_status }}
+                        </template>
+                    </Column>
                     <Column field="quotation_id" header="Action" style="width: 10%">
                         <template #body="rowData">
                             <div class="action-icons flex">
                               <a :href="apiUrl+'/pdf/'+rowData.data.quotation_id" v-if="rowData.data.approved_status=='Approved'">  <i class="bi bi-download mx-3" ></i></a>
+                              <a :href="apiUrl+'/pdf/'+rowData.data.quotation_id+'?bp=y'" v-if="rowData.data.approved_status=='Unapproved' && userRole === 'admin'">  <i class="bi bi-download mx-3" ></i></a>
 
                                 <i class="bi bi-pencil mx-3" @click="editquotation(rowData)"></i>
 
@@ -153,6 +167,7 @@ export default {
                 date: { value: null, matchMode: FilterMatchMode.CONTAINS  },
                 
                 customer_name: { value: null, matchMode: FilterMatchMode.CONTAINS  },
+                customer_phone_no: { value: null, matchMode: FilterMatchMode.CONTAINS  },
                 
                 preparedby_name: { value: null, matchMode: FilterMatchMode.CONTAINS  },
                 

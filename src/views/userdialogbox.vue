@@ -103,12 +103,13 @@
                         <input type="text" autocomplete="off" id="zipCode" class="form-control  mb-4" v-model="details.zip_code"
                             placeholder="Enter zip code">
                     </div>
-                    <div>
-                        <label for="email" >Email*</label>
+                    <div >
+                        <label for="email" >Email<span v-if="details.user_role && details.user_role !== 'customer'">*</span></label>
                         <input type="email" id="email" class="form-control" :class="isEmailValid() == 'has-success' || details.email_id ==''? 'mb-4':''" v-model="details.email_id" @keyup="isEmailValid()"
                             placeholder="Enter email">
                             <div v-if="isEmailValid() == 'has-error' && details.email_id!==''" class=" mb-4 text-danger">Invalid Email!..</div>
                     </div>
+                   
                     <div class="col-md-6   ">
                         <label for="phoneNumber">Phone Number*</label>
                         <input type="number" autocomplete="off" id="phoneNumber" class="form-control  mb-4" v-model="details.phone_no"
@@ -191,7 +192,6 @@ export default {
         return {
             apiUrl: process.env.VUE_APP_API_BASE_URL,
             loading: false,
-            validate_fields:['first_name', 'last_name', 'user_password', 'phone_no', 'email_id' ],
             confirmPassword: '',
             details: {
                 first_name: '',
@@ -216,6 +216,8 @@ export default {
             showPass: true,
             userRole: '',
             routeName: '',
+            validate_fields: ''
+          
             
         }
     },
@@ -231,6 +233,7 @@ export default {
         this.routeName = this.$route.name
         if(this.userRole === 'salesperson' ||  this.$route.name === "newusermaster" ) 
          this.details.user_role = 'customer'
+        this.validate_fields = this.details.user_role && this.details.user_role==='customer'?['first_name', 'last_name', 'user_password', 'phone_no' ]:['first_name', 'last_name', 'user_password', 'phone_no', 'email_id' ];
     },
     computed:{
         iscustomer(){
@@ -259,10 +262,15 @@ export default {
                     errorsValid += 1
                     return false
                 }
+                } else {
+                    if(this.details[quote] == '' ) {
+                    errorsValid += 1
+                    return false
+                }
                 }
                 
             })
-            console.log(this.details)
+            console.log(this.validate_fields)
             if(errorsValid === 0) {
            try {
              await axios.post(this.apiUrl + "/createuser", this.details);
