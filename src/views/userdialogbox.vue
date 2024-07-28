@@ -233,7 +233,7 @@ export default {
         this.routeName = this.$route.name
         if(this.userRole === 'salesperson' ||  this.$route.name === "newusermaster" ) 
          this.details.user_role = 'customer'
-        this.validate_fields = this.details.user_role && this.details.user_role==='customer'?['first_name', 'last_name', 'user_password', 'phone_no' ]:['first_name', 'last_name', 'user_password', 'phone_no', 'email_id' ];
+       
     },
     computed:{
         iscustomer(){
@@ -256,6 +256,7 @@ export default {
         async postapiuser() {
             this.loading = true
             let errorsValid = 0
+            this.validate_fields = this.details.user_role && this.details.user_role ==='customer'?['first_name', 'last_name', 'user_password', 'phone_no' ]:['first_name', 'last_name', 'user_password', 'phone_no', 'email_id' ];
             this.validate_fields.forEach((quote)=> {
                 if(quote !=='user_password' && this.userRole === 'salesperson') {
                     if(this.details[quote] == '' ) {
@@ -263,6 +264,7 @@ export default {
                     return false
                 }
                 } else {
+                    
                     if(this.details[quote] == '' ) {
                     errorsValid += 1
                     return false
