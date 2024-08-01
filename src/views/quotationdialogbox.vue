@@ -10,6 +10,7 @@
                     <li><router-link to="/quotation" >Estimates</router-link></li>
                     <li v-if="showPass"><a href="#">Add Estimate</a></li>
                     <li v-else><a href="#">Edit Estimate</a></li>
+
                 </ul>
             </div>
         </div>
@@ -19,16 +20,16 @@
             </div>
           </div>
         <div v-else class="bg-white mt-3 ">
-
             <div class="p-4 ">
-
-                <div class="my-3 ">
+                  
+                    <h4  v-if="!showPass" >{{this.quotationData.document_no}}</h4>
+                    <div class="my-3 ">
                     <div class="row  ">
                         <div class="left col-md-6">
                             <label for="choosetype">Choose Type*</label>
                             <select name="choosetype" id="choosetype" class="form-select my-2 "
                                 v-model="quotationData.quotation_type">
-                                <option value="Quotation">Quotation</option>
+                                <option value="Quotation">Bill</option>
                                 <option value="Estimates">Estimate</option>
                             </select>
                             <label for="company">Company Name*</label>
@@ -98,6 +99,7 @@
                         </div>
 
                         <div class="" v-if="jobwork.jobwork_name">
+                            
                             <div v-for="(product, proIndex) in jobwork.productData" :key="proIndex"
                                 class="probox row my-3">
                                 <div class="col-lg-2 col-md-3 col-sm-4"  ref="elementToDetectOutsideClick">
@@ -107,16 +109,15 @@
                                        @focus="onFocus(jobwork, product)" @input="onChange(jobwork, product)"
                                        @keyup.down="onArrowDown($event, jobwork.list_products)" @keyup.up="onArrowUp" @keyup.enter="onEnter($event, jobwork.list_products, product)"
                                         v-model="product.product_name"  class="form-control my-0 jobwork">
-                        
                            <ul v-if="jobwork.list_products.length && product.showList" @blur="product.showList = false"  ref="scrollContainer" id="scroller">
   <li
     v-for="(lproduct, lindex) in jobwork.list_products"
     :key="lindex"
     ref="options"
      @click="selectProduct(lproduct, product)"
-     :class="{ 'is-active': lindex === arrowCounter }"
+     :class="{ 'is-active': lindex === arrowCounter && lproduct && !lproduct.disabled, 'disabled': lproduct && lproduct.disabled }"
   >
-    {{ lproduct.product_name }}
+   {{lproduct.product_name}}
   </li>
 
 </ul>
@@ -168,7 +169,7 @@
                                 </div>
                                 <div class="col">
                                     <button v-if="proIndex > 0" class="button2"
-                                        @click="removeProduct(jobIndex, proIndex)">-</button>
+                                        @click="removeProduct( jobIndex, proIndex)">-</button>
                                     <button class=" button2" @click="addProduct(jobIndex)">+</button>
                                 </div>
                             </div>
@@ -292,8 +293,18 @@
                                         <input id="total_amount" type="number" class="form-control form-control-lg"
                                             v-model="quotationData.totalamount" readonly>
                                     </div>
+                                    <div  class="mb-2">
+                                        <label for="total_amount">Advance Amount</label>
+                                        <input id="advance_amount" type="number" class="form-control form-control-lg" @keyup="calculateBalance"
+                                            v-model="quotationData.advance_amount">
+                                    </div>
                               
-                        
+                                    <div  class="mb-2">
+                                        <label for="total_amount">Balance Amount</label>
+                                        <input id="advance_amount" type="number" class="form-control form-control-lg"
+                                            v-model="quotationData.balance_amount" readonly>
+                                    </div>
+                              
                     </div>
 
                 </div>
@@ -302,6 +313,7 @@
                     <button v-if="!showPass && this.quotationData.approved_status =='Unapproved'" class="addbutton" @click="updatequotation">Save Changes</button>
                     <button v-if="userRole==='admin' && !showPass && this.quotationData.approved_status==='Unapproved'"  class="addbutton" @click="approveOrUnApproveQuote(1)">Approve</button>
                     <button v-if="userRole==='admin' && !showPass && this.quotationData.approved_status==='Approved'"  class="addbutton" @click="approveOrUnApproveQuote(0)">UnApprove</button>
+                    <button v-if="userRole==='admin' && !showPass"  class="addbutton" @click="duplicateEstimate()">Duplicate</button>
                 </div>
             </div>
         </div>
@@ -344,6 +356,8 @@ export default {
                 totalamount: 0,
                 gst_amount: 0,
                 gst: 18,
+                advance_amount: 0,
+                balance_amount: 0
             },
             jobworkData: [{
                 jobwork_name: '',
@@ -414,6 +428,9 @@ fixScrolling(){
     let el = document.getElementById('scroller');
     el.scrollTop = liH * this.arrowCounter;
 },
+calculateBalance() {
+    this.quotationData.balance_amount = Math.round(this.quotationData.totalamount - this.quotationData.advance_amount).toFixed(2)
+},
 onEnter(ev, products, product) {
     if(products[this.arrowCounter].product_name !== 'others') {
         product.product_name = products[this.arrowCounter].product_name
@@ -441,6 +458,7 @@ onEnter(ev, products, product) {
             product.showList = true;
                          if (jobwork.products.length > 0) {
    jobwork.list_products = jobwork.products;
+   
    let others = jobwork.list_products.find(o => o.product_name === 'others');
    if(!others)
     jobwork.list_products.push({product_name: "others", unit_type: ""})
@@ -464,9 +482,10 @@ onEnter(ev, products, product) {
 
         },
 selectProduct (lproduct, product)  {
-  
     if(lproduct.product_name !== 'others') {
+        product.prd_id = lproduct.product_id
         product.product_name = lproduct.product_name
+        lproduct.disabled = true
  product.showList = false
  product.actual_price = lproduct.product_price
  product.actual_wholesale_price = lproduct.product_wholesale_price
@@ -492,6 +511,8 @@ selectProduct (lproduct, product)  {
                 product.unit_type = lproduct.unit.unit_type;
     } else {
         product.product_name = lproduct.product_name
+        product.prd_id = lproduct.product_id
+        lproduct.disabled = true
         product.showList = false
     }
 },
@@ -502,14 +523,24 @@ selectProduct (lproduct, product)  {
         },
         async fetchProducts(jobwork) {
             jobwork.list_products = []
-            jobwork.productData.forEach((product)=>{
-                product.showList = false
-            })
+           
             const response = await axios.get(`${this.apiUrl}/products`);
          
             if (response.data && response.data.products) {
                 jobwork.products = response.data.products;
             }
+            jobwork.products.forEach((product)=> {
+                product.disabled = false
+            })
+            jobwork.productData.forEach((product)=>{
+                product.showList = false
+                jobwork.list_products = jobwork.products
+                jobwork.list_products.forEach((prod)=>{
+                    if(prod.product_id===product.prd_id) {
+                        prod.disabled = true
+                    }
+                })
+            })
             if(this.showPass) {
                  jobwork.productData = []
             jobwork.productData.push({
@@ -568,10 +599,24 @@ selectProduct (lproduct, product)  {
             });
         },
         removeProduct(jobIndex, proIndex) {
+            let product_id = this.jobworkData[jobIndex].productData[proIndex].prd_id
             this.jobworkData[jobIndex].productData.splice(proIndex, 1);
+            const indexUpdate = this.jobworkData[jobIndex].list_products.findIndex(prod=>prod.product_id===product_id)
+            this.jobworkData[jobIndex].list_products[indexUpdate].disabled = false
+            
         },
         showError(errorMessage) {
             this.$toast.add({ severity: 'error', summary: 'Error', detail: errorMessage, life: 3000 });
+        },
+        async duplicateEstimate() {
+            const requestData = {
+                quotation_id: this.quotationData.quotation_id,
+                }   
+                await axios.post(this.apiUrl + "/duplicate/" + requestData.quotation_id);
+                
+          
+            this.$router.push({ name: 'quotation' });
+          
         },
         async approveOrUnApproveQuote(status) {
             const requestData = {
@@ -783,6 +828,7 @@ selectProduct (lproduct, product)  {
         await this.fetchResponseunit()
         if (this.$route.query && this.$route.query.data) {
             this.quotationData = JSON.parse(this.$route.query.data)
+            console.log(this.quotationData)
             let quotationDate = new Date(this.quotationData.date)
             if(this.quotationData.less_amount > 0 ) {
                 this.selecteddiscount = "Discountbyamount"
@@ -894,6 +940,7 @@ selectProduct (lproduct, product)  {
     padding: 0px !important;
     border-radius: 5px;
     height: 150px;
+    z-index: 100;
     overflow:auto; 
    
 }
@@ -908,5 +955,9 @@ selectProduct (lproduct, product)  {
 }
 .errorText {
     color: red;
+}
+.autocompleteClass ul li.disabled {
+    pointer-events:none;
+    opacity:0.6;        
 }
 </style>
