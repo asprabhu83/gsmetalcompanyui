@@ -308,12 +308,13 @@
                     </div>
 
                 </div>
-                <div class="d-flex flex-row-reverse bd-highlight my-4">
-                    <button v-if="showPass" class="addbutton" @click="submitData">Submit</button>
-                    <button v-if="!showPass && this.quotationData.approved_status =='Unapproved'" class="addbutton" @click="updatequotation">Save Changes</button>
-                    <button v-if="userRole==='admin' && !showPass && this.quotationData.approved_status==='Unapproved'"  class="addbutton" @click="approveOrUnApproveQuote(1)">Approve</button>
-                    <button v-if="userRole==='admin' && !showPass && this.quotationData.approved_status==='Approved'"  class="addbutton" @click="approveOrUnApproveQuote(0)">UnApprove</button>
-                    <button v-if="userRole==='admin' && !showPass"  class="addbutton" @click="duplicateEstimate()">Duplicate</button>
+                <div class="row d-flex flex-row-reverse bd-highlight my-4">
+                    <button v-if="showPass" class="addbutton col-md-2" @click="submitData">Submit</button>
+                    <button v-if="!showPass && this.quotationData.approved_status =='Unapproved'" class="addbutton col-md-2" @click="updatequotation">Save Changes</button>
+                    <button v-if="userRole==='admin' && !showPass && this.quotationData.approved_status==='Unapproved'"  class="addbutton col-md-2" @click="approveOrUnApproveQuote(1)">Approve</button>
+                    <button v-if="userRole==='admin' && !showPass && this.quotationData.approved_status==='Approved'"  class="addbutton col-md-2" @click="approveOrUnApproveQuote(0)">UnApprove</button>
+                    <button v-if="userRole==='admin' && !showPass"  class="addbutton col-md-2" @click="duplicateEstimate()">Duplicate</button>
+                     <button v-if="userRole==='admin' && !showPass && quotationData.quotation_type ==='Estimates'"  class="addbutton col-md-2" @click="convertToBill()">Convert To Bill</button>
                 </div>
             </div>
         </div>
@@ -608,11 +609,20 @@ selectProduct (lproduct, product)  {
         showError(errorMessage) {
             this.$toast.add({ severity: 'error', summary: 'Error', detail: errorMessage, life: 3000 });
         },
+        async convertToBill() {
+            const requestData = {
+                quotation_id: this.quotationData.quotation_id,
+                }   
+                await axios.post(this.apiUrl + "/duplicate/" + requestData.quotation_id+'?bill=y');
+                
+          
+            this.$router.push({ name: 'quotation' });
+        },
         async duplicateEstimate() {
             const requestData = {
                 quotation_id: this.quotationData.quotation_id,
                 }   
-                await axios.post(this.apiUrl + "/duplicate/" + requestData.quotation_id);
+                await axios.post(this.apiUrl + "/duplicate/" + requestData.quotation_id+'?bill=n');
                 
           
             this.$router.push({ name: 'quotation' });
