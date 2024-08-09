@@ -114,7 +114,7 @@
     v-for="(lproduct, lindex) in jobwork.list_products"
     :key="lindex"
     ref="options"
-     @click="selectProduct(lproduct, product)"
+     @click="selectProduct(jobwork, lproduct, product)"
      :class="{ 'is-active': lindex === arrowCounter && lproduct && !lproduct.disabled, 'disabled': lproduct && lproduct.disabled }"
   >
    {{lproduct.product_name}}
@@ -482,11 +482,11 @@ onEnter(ev, products, product) {
   
 
         },
-selectProduct (lproduct, product)  {
+selectProduct (jobwork, lproduct, product)  {
     if(lproduct.product_name !== 'others') {
         product.prd_id = lproduct.product_id
         product.product_name = lproduct.product_name
-        lproduct.disabled = true
+    
  product.showList = false
  product.actual_price = lproduct.product_price
  product.actual_wholesale_price = lproduct.product_wholesale_price
@@ -513,9 +513,15 @@ selectProduct (lproduct, product)  {
     } else {
         product.product_name = lproduct.product_name
         product.prd_id = lproduct.product_id
-        lproduct.disabled = true
+     
         product.showList = false
     }
+    jobwork.list_products.forEach((prod)=>prod.disabled = false);
+    jobwork.productData.forEach((jproduct)=>{
+                jproduct.showList = false
+                let filterprod = jobwork.list_products.filter((prod)=>prod.product_id===jproduct.prd_id)
+                filterprod[0].disabled = true
+            })
 },
         async fetchData(endpoint, responseDataKey, extractFromTableName = false) {
             const response = await axios.get(this.apiUrl + endpoint);
