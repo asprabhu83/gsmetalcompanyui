@@ -64,12 +64,12 @@
                         <input type="text" autocomplete="false" role="presentation" id="lastName" name="last_name" class="form-control  mb-4" v-model="details.last_name"
                             placeholder="Enter last name">
                     </div>
-                    <div v-if="userRole === 'admin' || userRole === 'staff'">
+                    <div class="col-md-6   " v-if="details.user_role === 'admin' || details.user_role === 'staff' || details.user_role === 'salesperson'">
                         <label for="userPassword">User Password*</label>
                         <input type="password" id="userPassword" class="form-control  mb-4"
                             v-model="details.user_password" placeholder="Enter user password">
                     </div>
-                    <div v-if="userRole === 'admin'  || userRole === 'staff'">
+                    <div class="col-md-6   " v-if="details.user_role === 'admin'  || details.user_role === 'staff' || details.user_role === 'salesperson'">
                         <label for="userPassword">Confirm Password*</label>
                         <input type="password" id="confirmPassword" class="form-control " :class="confirmPassword == ''?'mb-4':''"
                             v-model="confirmPassword" placeholder="Enter user password">
