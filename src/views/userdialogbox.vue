@@ -256,7 +256,7 @@ export default {
         async postapiuser() {
             this.loading = true
             let errorsValid = 0
-            this.validate_fields = this.details.user_role && this.details.user_role ==='customer'?['first_name', 'last_name', 'user_password', 'phone_no' ]:['first_name', 'last_name', 'user_password', 'phone_no', 'email_id' ];
+            this.validate_fields = this.details.user_role && this.details.user_role ==='customer'?['first_name', 'last_name', 'phone_no' ]:['first_name', 'last_name', 'user_password', 'phone_no', 'email_id' ];
             this.validate_fields.forEach((quote)=> {
                 if(quote !=='user_password' && this.userRole === 'salesperson') {
                     if(this.details[quote] == '' ) {
