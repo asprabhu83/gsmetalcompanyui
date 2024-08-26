@@ -60,11 +60,16 @@
                             placeholder="Enter first name">
                     </div>
                     <div class="col-md-6 ">
-                        <label for="lastName">Last Name*</label>
+                        <label for="lastName">Last Name</label>
                         <input type="text" autocomplete="false" role="presentation" id="lastName" name="last_name" class="form-control  mb-4" v-model="details.last_name"
                             placeholder="Enter last name">
                     </div>
-                    <div class="col-md-6   " v-if="details.user_role === 'admin' || details.user_role === 'staff' || details.user_role === 'salesperson'">
+                    <div v-if="details.user_role === 'customer'">
+                        <label for="clientname">Client Name*</label>
+                        <input type="text" autocomplete="off" id="clientname" class="form-control  mb-4" v-model="details.client_name"
+                            placeholder="Enter Client Name">
+                    </div>
+                    <div class="col-md-6" v-if="details.user_role === 'admin' || details.user_role === 'staff' || details.user_role === 'salesperson'">
                         <label for="userPassword">User Password*</label>
                         <input type="password" id="userPassword" class="form-control  mb-4"
                             v-model="details.user_password" placeholder="Enter user password">
@@ -84,7 +89,7 @@
                         </div>
                     </div>
                     <div class="col-md-6   ">
-                        <label for="address1">Address 1*</label>
+                        <label for="address1">Address 1</label>
                         <input type="text" autocomplete="off" id="address1" class="form-control  mb-4" v-model="details.address1"
                             placeholder="Enter address 1">
                     </div>
@@ -93,6 +98,7 @@
                         <input type="text" autocomplete="off" id="address2" class="form-control  mb-4" v-model="details.address2"
                             placeholder="Enter address 2">
                     </div>
+                     
                     <div>
                         <label for="city">City*</label>
                         <input type="text" autocomplete="off" id="city" class="form-control  mb-4" v-model="details.city"
@@ -199,6 +205,7 @@ export default {
                 user_password: '',
                 address1: '',
                 address2: '',
+                client_name: '',
                 city: '',
                 zip_code: '',
                 email_id: '',
@@ -256,7 +263,7 @@ export default {
         async postapiuser() {
             this.loading = true
             let errorsValid = 0
-            this.validate_fields = this.details.user_role && this.details.user_role ==='customer'?['first_name', 'last_name', 'phone_no' ]:['first_name', 'last_name', 'user_password', 'phone_no', 'email_id' ];
+            this.validate_fields = this.details.user_role && this.details.user_role ==='customer'?['first_name',  'phone_no' ]:['first_name',  'user_password', 'phone_no', 'email_id' ];
             this.validate_fields.forEach((quote)=> {
                 if(quote !=='user_password' && this.userRole === 'salesperson') {
                     if(this.details[quote] == '' ) {

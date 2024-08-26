@@ -30,7 +30,7 @@
 
 
                     </div>
-                    <div>
+                    <div  class="col-md-6 ">
                         <label for="email" >Email*</label>
                         <input type="email" id="email" class="form-control" :class="isEmailValid() == 'has-success' || details.company_email_id ==''? 'mb-4':''" v-model="details.company_email_id" @keyup="isEmailValid()"
                             placeholder="Enter email">
@@ -41,6 +41,18 @@
                         <label for="companyPhoneNumber"> Phone Number*</label>
                         <input type="number" autocomplete="off" id="companyPhoneNumber" class="form-control  mb-4 "
                             v-model="details.company_phone_no" placeholder="Enter company phone number">
+
+                    </div>
+                     <div class="col-md-6 ">
+                        <label for="companyPhoneNumber">Alternate Phone Number*</label>
+                        <input type="number" autocomplete="off" id="alternatePhoneNumber" class="form-control  mb-4 "
+                            v-model="details.alter_no" placeholder="Enter alternate phone number">
+
+                    </div>
+                       <div class="col-md-6 ">
+                        <label for="landline">Landline Number*</label>
+                        <input type="number" autocomplete="off" id="landline" class="form-control  mb-4 "
+                            v-model="details.landline_no" placeholder="Enter landline number">
 
                     </div>
                     <div>
@@ -163,6 +175,8 @@ export default {
                 zip_code: '',
                 company_email_id: '',
                 company_phone_no: '',
+                alter_no: '',
+                landline_no: '',
                 company_logo: '',
                 company_website: '',
                 bank_name: '',

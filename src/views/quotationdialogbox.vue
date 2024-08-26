@@ -46,21 +46,25 @@
 
 
                         </div>
+                        
+                         
                         <div class="right col-md-6">
+                            <div class="col-md-12">
                             <label for="Est_Caption">Est Caption*</label>
                             <input id="Est_Caption" v-model="quotationData.est_caption" type="text" autocomplete="off"
                                 class="form-control my-2">
-
+                            </div>
+                            <div class="col-md-12 my-2">
+                                <div>
                             <label for="customer">Customer* <i class="bi bi-person-fill-add mx-1 fs-3 text-primary" @click="addUser()"></i></label>
-                        
-                            <select id="customer" v-model="quotationData.customer_id" class="form-select my-2">
-                                <option v-for="(option4, key) in responseuser" :value="option4.user_id" :key="key">
-                                    {{ option4.first_name }} {{ option4.last_name }} ({{ option4.phone_no }})
-                                </option>
-                            </select>
+                        </div>
+                            <AutoComplete v-model="selectedCustomer" dropdown optionLabel="suggestedName" :suggestions="filterCustomers" @complete="customerSearch" />
+                        </div>
+                        <div>
                             <label for="date">Date</label>
                             
                             <input id="date" v-model="quotationData.date" type="date" class="form-control my-2">
+                        </div>
                         </div>
                     </div>
                     <label for="choose_Price_Method">Choose Price Method*</label>
@@ -325,6 +329,7 @@
 <script>
 import axios from 'axios';
 import Toast from 'primevue/toast';
+import AutoComplete from 'primevue/autocomplete';
 
 export default {
     name: 'quotationdialogbox-page',
@@ -334,8 +339,10 @@ export default {
             userRole: '',
             searchTerm: '',
             searchProducts: [],
+            filteredCustomers: [],
             arrowCounter: 0,
             loading: false,
+            selectedCustomer: {},
             validate_fields:['quotation_type', 'company_id', 'est_caption', 'customer_id', 'totalamount' ],
             quotationData: {
                 quotation_type: '',
@@ -398,11 +405,14 @@ export default {
     computed:{
         salesPersonID(){
             return localStorage.getItem('userRole') === 'salesperson'?localStorage.getItem("userId"):'';
+        },
+        filterCustomers() {
+            return this.filteredCustomers.length? this.filteredCustomers : this.responseuser
         }
 
     },
     components: {
-        Toast
+        Toast, AutoComplete
     },
     methods: {
         addUser() {
@@ -410,11 +420,22 @@ export default {
         },
         onArrowDown(ev, products) {
     ev.preventDefault()
-    console.log(ev, products)
+  
     if (this.arrowCounter < products.length - 1) { 
         this.arrowCounter = this.arrowCounter + 1;
         this.fixScrolling();
     }
+},
+customerSearch(event) {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            this.filteredCustomers = [...this.responseuser];
+        } else {
+            this.filteredCustomers = this.responseuser.filter((user) => {
+                return user.suggestedName.toLowerCase().includes(event.query.toLowerCase());
+            });
+        }
+    }, 250);
 },
 onArrowUp(ev) {
     ev.preventDefault()
@@ -526,6 +547,12 @@ selectProduct (jobwork, lproduct, product)  {
         async fetchData(endpoint, responseDataKey, extractFromTableName = false) {
             const response = await axios.get(this.apiUrl + endpoint);
             this[responseDataKey] = extractFromTableName ? response.data.TableName : response.data;
+            if(responseDataKey === 'responseuser') {
+                this.responseuser.forEach((user) => {
+                    user.suggestedName = user.first_name + ' ' + user.last_name + ' ('+user.phone_no+')'
+                })
+              
+            }
 
         },
         async fetchProducts(jobwork) {
@@ -664,6 +691,7 @@ selectProduct (jobwork, lproduct, product)  {
         async submitData() {
             this.loading = true
             let errorsValid = 0
+            if(this.selectedCustomer != {}) this.quotationData.customer_id = this.selectedCustomer.user_id
             this.validate_fields.forEach((quote)=> {
                 if(this.quotationData[quote] == '' && this.quotationData['totalamount'] == 0) {
                     
@@ -803,6 +831,7 @@ selectProduct (jobwork, lproduct, product)  {
             this.loading = true
 
             const quotationId = this.quotationData.quotation_id;
+            if(this.selectedCustomer != {}) this.quotationData.customer_id = this.selectedCustomer.user_id
             const requestData = {
                 quotationData: this.quotationData,
                 jobworkData: this.jobworkData
@@ -844,8 +873,11 @@ selectProduct (jobwork, lproduct, product)  {
         await this.fetchResponseunit()
         if (this.$route.query && this.$route.query.data) {
             this.quotationData = JSON.parse(this.$route.query.data)
-            console.log(this.quotationData)
+                if(this.quotationData.customer_id) {
+                    this.selectedCustomer = this.responseuser.filter((user)=> {return user.user_id===this.quotationData.customer_id})[0]
+                }
             let quotationDate = new Date(this.quotationData.date)
+            
             if(this.quotationData.less_amount > 0 ) {
                 this.selecteddiscount = "Discountbyamount"
             } 
@@ -975,5 +1007,8 @@ selectProduct (jobwork, lproduct, product)  {
 .autocompleteClass ul li.disabled {
     pointer-events:none;
     opacity:0.6;        
+}
+.p-autocomplete {
+    width: 100% !important;
 }
 </style>
