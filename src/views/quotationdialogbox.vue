@@ -929,7 +929,7 @@ selectProduct (jobwork, lproduct, product)  {
 
 
 
-<style scoped>
+<style>
 .button2 {
 
     color: #F5F5FA;
@@ -1010,5 +1010,10 @@ selectProduct (jobwork, lproduct, product)  {
 }
 .p-autocomplete {
     width: 100% !important;
+}
+.p-autocomplete > .p-button.p-button-icon-only {
+    background: none !important;
+    border: 1px solid #dee2e6 !important;
+    color: black;
 }
 </style>

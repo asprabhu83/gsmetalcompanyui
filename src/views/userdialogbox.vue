@@ -65,7 +65,7 @@
                             placeholder="Enter last name">
                     </div>
                     <div v-if="details.user_role === 'customer'">
-                        <label for="clientname">Client Name*</label>
+                        <label for="clientname">Client Name</label>
                         <input type="text" autocomplete="off" id="clientname" class="form-control  mb-4" v-model="details.client_name"
                             placeholder="Enter Client Name">
                     </div>
@@ -100,17 +100,17 @@
                     </div>
                      
                     <div>
-                        <label for="city">City*</label>
+                        <label for="city">City</label>
                         <input type="text" autocomplete="off" id="city" class="form-control  mb-4" v-model="details.city"
                             placeholder="Enter city">
                     </div>
                     <div>
-                        <label for="zipCode">Zip Code*</label>
+                        <label for="zipCode">Zip Code</label>
                         <input type="text" autocomplete="off" id="zipCode" class="form-control  mb-4" v-model="details.zip_code"
                             placeholder="Enter zip code">
                     </div>
                     <div >
-                        <label for="email" >Email<span v-if="details.user_role && details.user_role !== 'customer'">*</span></label>
+                        <label for="email" >Email*<span v-if="details.user_role && details.user_role !== 'customer'">*</span></label>
                         <input type="email" id="email" class="form-control" :class="isEmailValid() == 'has-success' || details.email_id ==''? 'mb-4':''" v-model="details.email_id" @keyup="isEmailValid()"
                             placeholder="Enter email">
                             <div v-if="isEmailValid() == 'has-error' && details.email_id!==''" class=" mb-4 text-danger">Invalid Email!..</div>
@@ -263,7 +263,7 @@ export default {
         async postapiuser() {
             this.loading = true
             let errorsValid = 0
-            this.validate_fields = this.details.user_role && this.details.user_role ==='customer'?['first_name',  'phone_no' ]:['first_name',  'user_password', 'phone_no', 'email_id' ];
+            this.validate_fields = this.details.user_role && this.details.user_role ==='customer'?['first_name',  'phone_no', 'email_id' ]:['first_name',  'user_password', 'phone_no', 'email_id' ];
             this.validate_fields.forEach((quote)=> {
                 if(quote !=='user_password' && this.userRole === 'salesperson') {
                     if(this.details[quote] == '' ) {
