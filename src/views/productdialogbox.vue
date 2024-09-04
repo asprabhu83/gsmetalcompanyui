@@ -42,7 +42,7 @@
                 </div>
                 <div class="col-md-5" >
 
-                    <label for="product_image">Product Image* </label>
+                    <label for="product_image">Product Image </label>
                     <input type="file" class="form-control w-100 mb-3" @change="handleFileChange">
                     <div v-if="!showPass">
                         <img :src="product.editImage" alt="product Logo" style="max-width: 50px; max-height: 50px;">
@@ -88,7 +88,7 @@ export default {
         return {
             apiUrl: process.env.VUE_APP_API_BASE_URL,
             loading: false,
-            validate_fields:['product_name', 'product_description', 'product_price', 'u_id', 'product_wholesale_price'],
+            validate_fields:['product_name', 'product_price', 'u_id', 'product_wholesale_price'],
         
 
 

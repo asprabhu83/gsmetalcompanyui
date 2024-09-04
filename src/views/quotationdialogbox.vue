@@ -198,7 +198,7 @@
                         </div>
 
                         <div class=" col-md-4" v-if="userRole !='salesperson'">
-                            <label for="salesperson">Sales Person</label>
+                            <label for="salesperson">Sales Person*</label>
                             <select id="salesperson" v-model="quotationData.salesperson_id" class="form-select">
                                 <option v-for="(option6, key) in responsesales" :value="option6.user_id" :key="key">
                                     {{ option6.first_name }} {{ option6.last_name }}
@@ -317,7 +317,7 @@
                     <button v-if="!showPass && this.quotationData.approved_status =='Unapproved'" class="addbutton col-md-2" @click="updatequotation">Save Changes</button>
                     <button v-if="userRole==='admin' && !showPass && this.quotationData.approved_status==='Unapproved'"  class="addbutton col-md-2" @click="approveOrUnApproveQuote(1)">Approve</button>
                     <button v-if="userRole==='admin' && !showPass && this.quotationData.approved_status==='Approved'"  class="addbutton col-md-2" @click="approveOrUnApproveQuote(0)">UnApprove</button>
-                    <button v-if="userRole==='admin' && !showPass"  class="addbutton col-md-2" @click="duplicateEstimate()">Duplicate</button>
+                    <button v-if="!showPass"  class="addbutton col-md-2" @click="duplicateEstimate()">Duplicate</button>
                      <button v-if="userRole==='admin' && !showPass && quotationData.quotation_type ==='Estimates'"  class="addbutton col-md-2" @click="convertToBill()">Convert To Bill</button>
                 </div>
             </div>
@@ -343,7 +343,7 @@ export default {
             arrowCounter: 0,
             loading: false,
             selectedCustomer: {},
-            validate_fields:['quotation_type', 'company_id', 'est_caption', 'customer_id', 'totalamount' ],
+            validate_fields:['quotation_type', 'company_id', 'est_caption', 'customer_id', 'totalamount', 'salesperson_id' ],
             quotationData: {
                 quotation_type: '',
                 company_id: '',

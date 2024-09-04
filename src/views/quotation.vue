@@ -16,7 +16,7 @@
             <div v-if="responsequotation && responsequotation.length > 0" >
     
         
-                <DataTable v-model:filters="filters" :value="responsequotation" removableSort filterDisplay="row"
+                <DataTable v-model:filters="filters" :value="responsequotation"  scrollable selectionMode="single" metaKeySelection="true" dataKey="document_no" removableSort filterDisplay="row"
                     tableStyle="min-width: 50rem" paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]">
                         <template #header>
                 <div class="flex justify-content-between">
@@ -45,7 +45,10 @@
                         </template>
                     </Column>
                     <Column field="address" header="Address" sortable style="min-width: 12rem">
-
+                        <template #filter="{ filterModel, filterCallback }">
+                            <InputText v-model="filterModel.value" type="text" autocomplete="off" @input="filterCallback()"
+                                class="p-column-filter" />
+                        </template>
                       
                         </Column>
                     <Column field="date" header="Quotation Date" sortable style="min-width: 12rem">
@@ -102,11 +105,11 @@
                              {{ rowData.data.approved_status }}
                         </template>
                     </Column>
-                    <Column field="quotation_id" header="Action" style="width: 10%">
+                    <Column field="quotation_id" header="Action" frozen  alignFrozen="right"  style="width: 10%">
                         <template #body="rowData">
                             <div class="action-icons flex">
-                              <a :href="apiUrl+'/pdf/'+rowData.data.quotation_id" v-if="rowData.data.approved_status=='Approved'">  <i class="bi bi-download mx-3" ></i></a>
-                              <a :href="apiUrl+'/pdf/'+rowData.data.quotation_id+'?bp=y'" v-if="rowData.data.approved_status=='Unapproved' && userRole === 'admin'">  <i class="bi bi-download mx-3" ></i></a>
+                              <a :href="apiUrl+'/pdf/'+rowData.data.quotation_id" target="_blank" v-if="rowData.data.approved_status=='Approved'">  <i class="bi bi-download mx-3" ></i></a>
+                              <a :href="apiUrl+'/pdf/'+rowData.data.quotation_id+'?bp=y'"  target="_blank" v-if="rowData.data.approved_status=='Unapproved' && userRole === 'admin'">  <i class="bi bi-download mx-3" ></i></a>
 
                                 <i class="bi bi-pencil mx-3" @click="editquotation(rowData)"></i>
 
@@ -115,10 +118,6 @@
                             </div>
                         </template>
                     </Column>
-
-
-
-
                 </DataTable>
             </div>
         </div>
@@ -163,6 +162,8 @@ export default {
             filters: {
                 document_no: { value: null, matchMode: FilterMatchMode.CONTAINS },
                 est_caption: { value: null, matchMode: FilterMatchMode.CONTAINS  },
+                address: { value: null, matchMode: FilterMatchMode.CONTAINS  },
+                
                 company_name: { value: null, matchMode: FilterMatchMode.CONTAINS  },
                 date: { value: null, matchMode: FilterMatchMode.CONTAINS  },
                 
@@ -186,12 +187,24 @@ export default {
 
     methods: {
         clearFilter () {
-     this.filters = {
+     this.filters ={
+                document_no: { value: null, matchMode: FilterMatchMode.CONTAINS },
                 est_caption: { value: null, matchMode: FilterMatchMode.CONTAINS  },
+                company_name: { value: null, matchMode: FilterMatchMode.CONTAINS  },
+                date: { value: null, matchMode: FilterMatchMode.CONTAINS  },
+                address: { value: null, matchMode: FilterMatchMode.CONTAINS  },
+               
+                customer_name: { value: null, matchMode: FilterMatchMode.CONTAINS  },
+                customer_phone_no: { value: null, matchMode: FilterMatchMode.CONTAINS  },
+                
+                preparedby_name: { value: null, matchMode: FilterMatchMode.CONTAINS  },
+                
+                salesperson_name: { value: null, matchMode: FilterMatchMode.CONTAINS  },
                 totalamount: {
                     value: null, matchMode: FilterMatchMode.CONTAINS 
                 },
             }
+
       },
    
         openDialogBox() {
