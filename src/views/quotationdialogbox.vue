@@ -930,8 +930,8 @@ selectProduct (jobwork, lproduct, product)  {
 
 
 <style>
-.button2 {
 
+.button2 {
     color: #F5F5FA;
     border: 2px solid #9389e7;
     background-color: #213785;

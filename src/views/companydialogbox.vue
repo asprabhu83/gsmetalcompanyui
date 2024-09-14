@@ -31,7 +31,7 @@
 
                     </div>
                     <div  class="col-md-6 ">
-                        <label for="email" >Email*</label>
+                        <label for="email" >Email</label>
                         <input type="email" id="email" class="form-control" :class="isEmailValid() == 'has-success' || details.company_email_id ==''? 'mb-4':''" v-model="details.company_email_id" @keyup="isEmailValid()"
                             placeholder="Enter email">
                             <div v-if="isEmailValid() == 'has-error' && details.company_email_id!==''" class=" mb-4 text-danger">Invalid Email!..</div>
@@ -165,7 +165,7 @@ export default {
         return {
             apiUrl: process.env.VUE_APP_API_BASE_URL,
             loading:false,
-            validate_fields:['company_name', 'company_email_id', 'company_phone_no' ],
+            validate_fields:['company_name',  'company_phone_no' ],
         
             details: {
                 company_name: '',

@@ -16,7 +16,7 @@
             <div v-if="responsequotation && responsequotation.length > 0" >
     
         
-                <DataTable v-model:filters="filters" :value="responsequotation"  scrollable selectionMode="single" metaKeySelection="true" dataKey="document_no" removableSort filterDisplay="row"
+                <DataTable v-model:filters="filters" :value="responsequotation"  dataKey="document_no" removableSort filterDisplay="row"
                     tableStyle="min-width: 50rem" paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]">
                         <template #header>
                 <div class="flex justify-content-between">
@@ -105,7 +105,7 @@
                              {{ rowData.data.approved_status }}
                         </template>
                     </Column>
-                    <Column field="quotation_id" header="Action" frozen  alignFrozen="right"  style="width: 10%">
+                    <Column field="quotation_id" header="Action"  style="width: 10%">
                         <template #body="rowData">
                             <div class="action-icons flex">
                               <a :href="apiUrl+'/pdf/'+rowData.data.quotation_id" target="_blank" v-if="rowData.data.approved_status=='Approved'">  <i class="bi bi-download mx-3" ></i></a>
@@ -256,7 +256,7 @@ export default {
 
 
 
-<style scoped>
+<style >
 .buttonn {
     background-color: #aea6f8;
     border: none;
@@ -289,5 +289,8 @@ export default {
 
 .ul {
     list-style: none;
+}
+.p-datatable-scrollable-table > .p-datatable-thead {
+    z-index: 0 !important;
 }
 </style>
