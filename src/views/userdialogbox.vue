@@ -118,13 +118,13 @@
                    
                     <div class="col-md-6   ">
                         <label for="phoneNumber">Phone Number*</label>
-                        <input type="number" autocomplete="off" id="phoneNumber" class="form-control  mb-4" v-model="details.phone_no"
+                        <input type="text" autocomplete="off" id="phoneNumber" class="form-control  mb-4" v-model="details.phone_no"
                             placeholder="Enter phone number">
 
                     </div>
                     <div class="col-md-6 ">
                         <label for="alternateNumber">Alternate Number</label>
-                        <input type="number" autocomplete="off" id="alternateNumber" class="form-control  mb-4" v-model="details.alter_no"
+                        <input type="text" autocomplete="off" id="alternateNumber" class="form-control  mb-4" v-model="details.alter_no"
                             placeholder="Enter alternate number">
                     </div>
                     <div>
@@ -180,7 +180,7 @@
 
             </div>
         </div>
-        <Toast/>
+        <Toast position="top-center"/>
     </div>
 
 </template>
@@ -337,4 +337,5 @@ this.loading = true
 .color-green {
     color: green;
 }
+
 </style>

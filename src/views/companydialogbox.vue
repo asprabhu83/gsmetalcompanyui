@@ -39,19 +39,19 @@
                    
                     <div class="col-md-6 ">
                         <label for="companyPhoneNumber"> Phone Number*</label>
-                        <input type="number" autocomplete="off" id="companyPhoneNumber" class="form-control  mb-4 "
+                        <input type="text" autocomplete="off" id="companyPhoneNumber" class="form-control  mb-4 "
                             v-model="details.company_phone_no" placeholder="Enter company phone number">
 
                     </div>
                      <div class="col-md-6 ">
                         <label for="companyPhoneNumber">Alternate Phone Number*</label>
-                        <input type="number" autocomplete="off" id="alternatePhoneNumber" class="form-control  mb-4 "
+                        <input type="text" autocomplete="off" id="alternatePhoneNumber" class="form-control  mb-4 "
                             v-model="details.alter_no" placeholder="Enter alternate phone number">
 
                     </div>
                        <div class="col-md-6 ">
                         <label for="landline">Landline Number*</label>
-                        <input type="number" autocomplete="off" id="landline" class="form-control  mb-4 "
+                        <input type="text" autocomplete="off" id="landline" class="form-control  mb-4 "
                             v-model="details.landline_no" placeholder="Enter landline number">
 
                     </div>

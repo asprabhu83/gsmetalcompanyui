@@ -706,7 +706,7 @@ selectProduct (jobwork, lproduct, product)  {
                 }
                  const requestData = {
                 quotationData: this.quotationData,
-                jobworkData: this.jobworkData
+                jobworkdata: this.jobworkData
                 }   
         
             
@@ -834,7 +834,7 @@ selectProduct (jobwork, lproduct, product)  {
             if(this.selectedCustomer != {}) this.quotationData.customer_id = this.selectedCustomer.user_id
             const requestData = {
                 quotationData: this.quotationData,
-                jobworkData: this.jobworkData
+                jobworkdata: this.jobworkData
             };
             
             await axios.put(`${this.apiUrl}/updatequotation/${quotationId}`, requestData)
@@ -885,7 +885,7 @@ selectProduct (jobwork, lproduct, product)  {
              + ('0' + (quotationDate.getMonth()+1)).slice(-2) + '-'
              + ('0' + quotationDate.getDate()).slice(-2);
             this.quotationData.terms_conditions = JSON.parse(this.quotationData.terms_conditions)
-            this.jobworkData = this.quotationData.jobworkData
+            this.jobworkData = this.quotationData.jobworkdata
             this.jobworkData.forEach(async (jobwork) => {
                 jobwork.list_products = []
                 jobwork.productData.forEach((product)=> {
